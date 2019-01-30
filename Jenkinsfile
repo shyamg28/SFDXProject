@@ -11,8 +11,6 @@ node {
   def CONNECTED_APP_CONSUMER_KEY=env.CONNECTED_APP_CONSUMER_KEY_DH
   def ORG_ALIAS=env.ORG_ALIAS
 
-  set +x
-
   println 'KEY IS'
   println JWT_KEY_CRED_ID
   println HUB_ORG
