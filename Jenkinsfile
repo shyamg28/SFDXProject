@@ -43,41 +43,29 @@ node {
         }
         println rc
 
-        if (rc != 0) {
-          error 'Failed to create a scratch org!'
+        // Push source to scratch org
+        if (isUnix()) {
+          rc = sh returnStdout: true, script: "${toolbelt} force:source:push"
         } else {
-          // Push source to scratch org
-          if (isUnix()) {
-            rc = sh returnStdout: true, script: "${toolbelt} force:source:push"
-          } else {
-            rc = bat returnStdout: true, script: "\"${toolbelt}\" force:source:push"
-          }
-          println rc
-
-          if (rc != 0) {
-            error 'Failed to push source to scratch org!'
-          } else {
-            // Run unit tests on the scratch org
-            if (isUnix()) {
-              rc = sh returnStdout: true, script: "${toolbelt} force:apex:test:run --testlevel RunLocalTests --resultformat tap --targetusername ${ORG_ALIAS} --synchronous"
-            } else {
-              rc = bat returnStdout: true, script: "\"${toolbelt}\" force:apex:test:run --testlevel RunLocalTests --resultformat tap --targetusername ${ORG_ALIAS} --synchronous"
-            }
-            println rc
-
-            if (rc != 0) {
-              error 'Unit tests execution failed!'
-            } else {
-              // Delete the scratch org.
-              if (isUnix()) {
-                rc = sh returnStdout: true, script: "${toolbelt} force:org:delete -p -u ${ORG_ALIAS}"
-              } else {
-                rc = bat returnStdout: true, script: "\"${toolbelt}\" force:org:delete -p -u ${ORG_ALIAS}"
-              }
-              println rc
-            }
-          }
+          rc = bat returnStdout: true, script: "\"${toolbelt}\" force:source:push"
         }
+        println rc
+
+        // Run unit tests on the scratch org
+        if (isUnix()) {
+          rc = sh returnStdout: true, script: "${toolbelt} force:apex:test:run --testlevel RunLocalTests --resultformat tap --targetusername ${ORG_ALIAS} --synchronous"
+        } else {
+          rc = bat returnStdout: true, script: "\"${toolbelt}\" force:apex:test:run --testlevel RunLocalTests --resultformat tap --targetusername ${ORG_ALIAS} --synchronous"
+        }
+        println rc
+
+        // Delete the scratch org.
+        if (isUnix()) {
+          rc = sh returnStdout: true, script: "${toolbelt} force:org:delete -p -u ${ORG_ALIAS}"
+        } else {
+          rc = bat returnStdout: true, script: "\"${toolbelt}\" force:org:delete -p -u ${ORG_ALIAS}"
+        }
+        println rc
       }
     }
   }
